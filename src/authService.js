@@ -1,12 +1,13 @@
 import { UserManager, WebStorageStateStore, Log } from 'oidc-client-ts';
+import { ClientId, IdentityUrl } from './config';
 
 // Habilitar logs de debug de oidc-client-ts en la consola del navegador
 Log.setLogger(console);
 Log.setLevel(Log.DEBUG);
 
 const userManager = new UserManager({
-    authority: 'https://accounts.mobility360.x-pertec.com',
-    client_id: 'SalesMobilityDev',
+    authority: IdentityUrl,
+    client_id: ClientId,
 
     redirect_uri: `${window.location.origin}/callback`,
     post_logout_redirect_uri: `${window.location.origin}`,
@@ -15,6 +16,11 @@ const userManager = new UserManager({
     scope: 'openid profile offline_access',
 
     automaticSilentRenew: false, // Deshabilitado hasta que el flujo básico funcione
+
+    // Metadata forzada para el cierre de sesión indicado por el equipo del backend
+    metadataSeed: {
+        end_session_endpoint: `${IdentityUrl}/signout`
+    },
 
     // Almacenar estado en sessionStorage para que PKCE code_verifier persista
     stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
@@ -38,3 +44,4 @@ export const getToken = async () => {
 };
 
 export const logout = () => userManager.signoutRedirect();
+

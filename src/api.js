@@ -2,7 +2,10 @@ import axios from 'axios';
 import { getToken, login } from './authService';
 
 const api = axios.create({
-    // baseURL: 'https://tu-api.com', // Configura la URL base de tu API aquí
+    // baseURL: 'AQUI_PONDREMOS_LA_URL_DE_TU_NUEVA_API', 
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
 // Interceptor de request: agrega automáticamente el token
@@ -26,15 +29,5 @@ api.interceptors.response.use(
     },
 );
 
-// Mantener compatibilidad con setupInterceptor para uso manual
-export const setupInterceptor = (getTokenFn) => {
-    axios.interceptors.request.use((config) => {
-        const token = getTokenFn();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    });
-};
 
 export default api;
